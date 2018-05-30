@@ -354,7 +354,6 @@ nav h1 a {
 }
 
 @media screen and (max-width: 801px) {
-  /* Restaurant Detail Page for mobil */
   #breadcrumb {
     width: 100%;
     padding: 10px 5px 16px;
