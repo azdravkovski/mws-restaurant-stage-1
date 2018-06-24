@@ -1,4 +1,20 @@
 /**
+ * Service Registration.
+ */
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+      navigator.serviceWorker.register('js/sw.js').then(function(registration) {
+          // Registration was successful
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      }, function(err) {
+          // registration failed :(
+          console.log('ServiceWorker registration failed: ', err);
+      });
+  });
+}
+
+/**
  * Common database helper functions.
  */
 class DBHelper {
@@ -15,7 +31,7 @@ class DBHelper {
   /**
    * Fetch all restaurants.
    */
-  static fetchRestaurants(callback) {
+  static fetchRestaurants(callback) {  
     let xhr = new XMLHttpRequest();
     xhr.open('GET', DBHelper.DATABASE_URL);
     xhr.onload = () => {
