@@ -3,14 +3,14 @@
  */
 
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-      navigator.serviceWorker.register('js/sw.js').then(function(registration) {
-          // Registration was successful
-          console.log('ServiceWorker registration successful with scope: ', registration.scope);
-      }, function(err) {
-          // registration failed :(
-          console.log('ServiceWorker registration failed: ', err);
-      });
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('js/sw.js').then(function (registration) {
+      // Registration was successful
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, function (err) {
+      // registration failed :(
+      console.log('ServiceWorker registration failed: ', err);
+    });
   });
 }
 
@@ -24,27 +24,29 @@ class DBHelper {
    * Change this to restaurants.json file location on your server.
    */
   static get DATABASE_URL() {
-    const port = 8000 // Change this to your server port
+    const port = 1337 // Change this to your server port
     return `http://localhost:${port}/data/restaurants.json`;
   }
 
   /**
    * Fetch all restaurants.
    */
-  static fetchRestaurants(callback) {  
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', DBHelper.DATABASE_URL);
-    xhr.onload = () => {
-      if (xhr.status === 200) { // Got a success response from server!
-        const json = JSON.parse(xhr.responseText);
-        const restaurants = json.restaurants;
+  static fetchRestaurants(callback, id) {
+    let fetchURL;
+    if (!id) {
+      fetchURL = DBHelper.DATABASE_URL;
+    } else {
+      fetchURL = `${DBHelper.DATABASE_URL}/${id}`;
+    }
+
+    fetch(fetchURL)
+      .then(response => response.json())
+      .then(data => {
+        const {restaurants} = data;
+        console.log(restaurants);
         callback(null, restaurants);
-      } else { // Oops!. Got an error from server.
-        const error = (`Request failed. Returned status of ${xhr.status}`);
-        callback(error, null);
-      }
-    };
-    xhr.send();
+      })
+      .catch(error => callback(`Failure: ${error}`), null);
   }
 
   /**
@@ -178,7 +180,8 @@ class DBHelper {
       title: restaurant.name,
       url: DBHelper.urlForRestaurant(restaurant),
       map: map,
-      animation: google.maps.Animation.DROP}
+      animation: google.maps.Animation.DROP
+    }
     );
     return marker;
   }
